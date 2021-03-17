@@ -39,7 +39,7 @@ with open('README.md', 'r') as fh:
 
 setup(
     name='argos_tracker',
-    version='0.1.0-6',
+    version='0.1.0-9',
     author='Subhasis Ray',
     author_email='ray.subhasis@gmail.com',
     description='Software utility for tracking multiple objects (animals) in a video.',
@@ -54,7 +54,7 @@ setup(
     packages=find_packages(),
     classifiers=[
         'Programming Language :: Python :: 3',
-        'License :: GPL',
+        'License :: OSI Approved :: GNU General Public License (GPL)',
         'Operating System :: Microsoft :: Windows',
         'Operating System :: MacOS',
         'Operating System :: POSIX :: Linux',
