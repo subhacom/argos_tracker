@@ -28,7 +28,6 @@ https://stackoverflow.com/questions/27532112/how-to-handle-python-packages-with-
 """
 
 from setuptools import setup, find_packages, Extension
-from Cython.Build import cythonize
 import numpy
 
 
@@ -39,7 +38,7 @@ with open('README.md', 'r') as fh:
 
 setup(
     name='argos_tracker',
-    version='0.1.0-9',
+    version='0.1.0-10',
     author='Subhasis Ray',
     author_email='ray.subhasis@gmail.com',
     description='Software utility for tracking multiple objects (animals) in a video.',
@@ -63,7 +62,6 @@ setup(
     ],
     python_requires='>=3.6',
     install_requires=[
-        'cython',
         'torch', 
         'torchvision', 
         'numpy', 
