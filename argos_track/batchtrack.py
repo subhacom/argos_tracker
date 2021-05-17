@@ -7,17 +7,17 @@ Track objects in batch mode (non-interactively)
 ===============================================
 Usage:
 ::
-     python -m argos.batchtrack -i {input_file} -o {output_file}
+     python -m argos_track.batchtrack -i {input_file} -o {output_file}
      -c {config_file}
 
-Try ``python -m argos.batchtrack -h`` for details of command-line
+Try ``python -m argos_track.batchtrack -h`` for details of command-line
 options.
 
 This program allows non-interactive tracking of objects in a video.
 When using classical segmentation this can speed things up by
 utilizing multiple CPU cores.
 
-It may be easier to use the interactive tracking :py:mod:`argos.track`
+It may be easier to use the interactive tracking :py:mod:`argos_track`
 to play with the segmentation parameters to see what work best for
 videos in a specific setting. The optimal setting can then be exported
 to a configuration file which will then be passed with ``-c`` command
@@ -27,7 +27,7 @@ Examples
 --------
 Use YOLACT for segmentation and SORT for tracking:
 ::
-    python -m argos.batchtrack -i video.avi -o video.h5 -m yolact \\
+    python -m argos_track.batchtrack -i video.avi -o video.h5 -m yolact \\
     --yconfig=config/yolact.yml -w config/weights.pth -s 0.1 -k 10 \\
     --overlap_thresh=0.3 --cuda=True \\
     --pmin=10 --pmax=500 --wmin=5 --wmax=100 --hmin=5 --hmax=100 \\
@@ -82,7 +82,7 @@ the file ``config/weights.pth``.
 
 
 All of this can be more easily set graphically in
-:py:mod:`argos.track` and exported into a file, which can then be
+:py:mod:`argos_track` and exported into a file, which can then be
 passed with ``-c {config_file}``.
 
 """
@@ -107,7 +107,7 @@ from yolact.data import config as yconfig
 # This is actually yolact.utils
 from yolact.utils.augmentations import FastBaseTransform
 from yolact.layers import output_utils as oututils
-from argos.sortracker import SORTracker
+from argos_track.sortracker import SORTracker
 from argos.constants import DistanceMetric, OutlineStyle
 import argos.utility as ut
 from argos.segment import (
@@ -191,6 +191,7 @@ def load_weights(filename, cuda):
     global ynet
     if filename == '':
         raise ValueError('Empty filename for network weights')
+    print('#### CUDA ENABLED', cuda)
     print(f'Loading weights from {filename}')
     tic = time.perf_counter_ns()
     with torch.no_grad():
@@ -224,7 +225,7 @@ def segment_yolact(frame, score_threshold, top_k, overlap_thresh, cfgfile,
     ----------
     frame: numpy.ndarray
         (WxHxC) integer array with the image content.
-    score_threshold: float 
+    score_threshold: float
         Minimum score to include object, should be in `(0, 1)`.
     top_k: int
         The number of segmented objects to keep.
@@ -237,10 +238,10 @@ def segment_yolact(frame, score_threshold, top_k, overlap_thresh, cfgfile,
         Path to YOLACT network weights file.
     cuda: bool
         Whether to use CUDA.
-    Returns 
+    Returns
     -------
     numpy.ndarray
-        An array of bounding boxes of detected objects in 
+        An array of bounding boxes of detected objects in
         (xleft, ytop, width, height) format.
     """
     global ynet
@@ -281,7 +282,7 @@ def segment_yolact(frame, score_threshold, top_k, overlap_thresh, cfgfile,
         # top-left, width, height format
         if len(boxes) == 0:
             return np.empty(0)
-        
+
         boxes[:, 2:] = boxes[:, 2:] - boxes[:, :2]
         boxes = np.asanyarray(np.rint(boxes), dtype=np.int_)
         if overlap_thresh < 1:
@@ -425,10 +426,11 @@ def batch_segment(args):
     """Segment frames in parallel and save the bboxes of segmented objects in
     an HDF file for later tracking"""
     if 'SLURM_JOB_ID' in os.environ:  # this is a slurm job, use slurm env var or safe number of 2
-        cpu_count = int(os.environ.get('SLURM_CPUS_PER_TASK', '2'))  
+        cpu_count = int(os.environ.get('SLURM_CPUS_PER_TASK', '2'))
     else:
          cpu_count = mp.cpu_count()
     max_workers = args.max_proc if args.max_proc > 0 else cpu_count
+    print('BBBBBBB cuda', args.cuda)
     if args.seg_method == 'yolact':
         seg_fn = partial(segment_yolact, score_threshold=args.score_thresh,
                          top_k=args.top_k,
@@ -443,6 +445,8 @@ def batch_segment(args):
     print('Workers:', max_workers, 'CPUs:', cpu_count)
     logging.info(f'Running segmentation with {max_workers} worker processes on system with {cpu_count} cpus.')
     video = cv2.VideoCapture(args.infile)
+    if not video.isOpened():
+        raise IOError('Could not open video')
     data = []
     with cf.ProcessPoolExecutor(max_workers=max_workers) as executor:
         while video.isOpened():
@@ -552,8 +556,8 @@ def make_parser():
     yolact_grp.add_argument('--overlap_thresh', type=float, default=1.0,
                             help='Bboxes with IoU overlap higher than this are'
                                  ' merged')
-    yolact_grp.add_argument('--cuda', type=bool, default=True,
-                            help='Whether to use CUDA')
+    yolact_grp.add_argument('--cuda', action='store_true',
+                            help='If specified, use CUDA')
     thresh_grp = parser.add_argument_group(
         'Threshold',
         'Parameters for thresholding'
@@ -634,17 +638,19 @@ if __name__ == '__main__':
     # 5 proc 25 / 50 fps
     parser = make_parser()
     args = parser.parse_args()
+    print('ARGS:')
+    print(args)
     if args.config is not None:
         with open(args.config, 'r') as cfg_file:
             config = yaml.safe_load(cfg_file)
             for key, value in config.items():
                 vars(args)[key] = value
+        print('ARGS after update from config:')
+        print(args)
     if args.debug:
         logging.getLogger().setLevel(logging.DEBUG)
     else:
         logging.getLogger().setLevel(logging.INFO)
-    print('ARGS:')
-    print(args)
     batch_segment(args)
     batch_track(args)
     print('Finished tracking')

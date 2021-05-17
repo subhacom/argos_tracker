@@ -16,15 +16,10 @@
 
       pip install --index-url https://test.pypi.org/simple/ --no-deps argos-tracker --extra-index-url https://pypi.org/simple
 
+This requires the argos-toolkit package.
 
-``argos-tracker`` is just PyPI name, the installed package is named
-``argos``. This is to avoid name conflict with another package on
-PyPI.
-
-There is an existing, unrelated ``argos`` package for viewing HDF5
-files. If you must use both, see this:
-https://stackoverflow.com/questions/27532112/how-to-handle-python-packages-with-conflicting-names
-
+``argos-tracker`` is PyPI name, the installed module is named
+``argos_track``.
 """
 
 from setuptools import setup, find_packages, Extension
@@ -38,7 +33,7 @@ with open('README.md', 'r') as fh:
 
 setup(
     name='argos_tracker',
-    version='0.1.0-10',
+    version='0.1.0-11',
     author='Subhasis Ray',
     author_email='ray.subhasis@gmail.com',
     description='Software utility for tracking multiple objects (animals) in a video.',
@@ -62,17 +57,17 @@ setup(
     ],
     python_requires='>=3.6',
     install_requires=[
-        'torch', 
-        'torchvision', 
-        'numpy', 
-        'scipy', 
+        'torch',
+        'torchvision',
+        'numpy',
+        'scipy',
         'scikit-learn',
         'pandas',
         'tables',
         'sortedcontainers',
         'pyqt5',
-        'opencv-contrib-python', 
-        'pyyaml', 
+        'opencv-contrib-python',
+        'pyyaml',
         'matplotlib',
         'argos_toolkit'
     ],
