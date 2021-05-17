@@ -29,7 +29,7 @@ Use YOLACT for segmentation and SORT for tracking:
 ::
     python -m argos_track.batchtrack -i video.avi -o video.h5 -m yolact \\
     --yconfig=config/yolact.yml -w config/weights.pth -s 0.1 -k 10 \\
-    --overlap_thresh=0.3 --cuda=True \\
+    --overlap_thresh=0.3 --cuda \\
     --pmin=10 --pmax=500 --wmin=5 --wmax=100 --hmin=5 --hmax=100 \\
     -x 0.3 --min_hits=3 --max_age=20
 
@@ -52,7 +52,7 @@ the file ``config/weights.pth``.
 - ``--overlap_thresh=0.3``: At segmentation stage, merge detections
   whose bounding boxes overlap more than 0.3 of their total area.
 
-- ``--cuda=True``: use GPU acceleration.
+- ``--cuda``: use GPU acceleration.
 
 - ``--pmin=10``: Include objects at least 10 pixels in bounding box
   area.
