@@ -130,6 +130,9 @@ class ArgosTracker(qw.QMainWindow):
                                     self._video_widget.relativeFontSizeAction,
                                     self._video_widget.lineWidthAction,
                                     self._video_widget.infoAction])
+        self._play_menu = self.menuBar().addMenu('&Play')
+        self._play_menu.addActions((self._video_widget.playAction,
+                                    self._video_widget.refreshAction))
         self._advanced_menu = self.menuBar().addMenu('Advanced')
         # self._advanced_menu.addAction(self._video_widget.arenaSelectAction)
         self._advanced_menu.addAction(self._video_widget.resetArenaAction)
@@ -179,6 +182,8 @@ class ArgosTracker(qw.QMainWindow):
     def makeShortcuts(self):
         self.sc_play = qw.QShortcut(qg.QKeySequence(qc.Qt.Key_Space), self)
         self.sc_play.activated.connect(self._video_widget.playAction.trigger)
+        self.sc_refresh = qw.QShortcut(qg.QKeySequence('R'), self)
+        self.sc_refresh.activated.connect(self._video_widget.refreshAction.trigger)
         self.sc_open = qw.QShortcut(qg.QKeySequence('Ctrl+O'), self)
         self.sc_open.activated.connect(self._video_widget.openVideo)
 
