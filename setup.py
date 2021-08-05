@@ -33,7 +33,7 @@ with open('README.md', 'r') as fh:
 
 setup(
     name='argos_tracker',
-    version='0.1.0-11',
+    version='0.1.0-12',
     author='Subhasis Ray',
     author_email='ray.subhasis@gmail.com',
     description='Software utility for tracking multiple objects (animals) in a video.',
