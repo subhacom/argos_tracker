@@ -24,7 +24,7 @@ This requires the argos-toolkit package.
 
 from setuptools import setup, find_packages, Extension
 import numpy
-
+import argos_track
 
 with open('README.md', 'r') as fh:
     long_description = fh.read()
@@ -33,7 +33,7 @@ with open('README.md', 'r') as fh:
 
 setup(
     name='argos_tracker',
-    version='0.1.1',
+    version=argos_track.__version__,
     author='Subhasis Ray',
     author_email='ray.subhasis@gmail.com',
     description='Software utility for tracking multiple objects (animals) in a video.',
