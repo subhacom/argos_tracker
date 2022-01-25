@@ -30,20 +30,19 @@ with open('README.md', 'r') as fh:
     long_description = fh.read()
 
 
-
 setup(
     name='argos_tracker',
     version=argos_track.__version__,
     author='Subhasis Ray',
     author_email='ray.subhasis@gmail.com',
-    description='Software utility for tracking multiple objects (animals) in a video.',
+    description='Tracking tool of the argos-toolkit for tracking multiple objects (animals) in a video.',
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/subhacom/argos_tracker',
     project_urls={
-    'Documentation': 'https://argos.readthedocs.io',
-    'Source': 'https://github.com/subhacom/argos_tracker',
-    'Tracker': 'https://github.com/subhacom/argos/issues',
+        'Documentation': 'https://argos.readthedocs.io',
+        'Source': 'https://github.com/subhacom/argos_tracker',
+        'Tracker': 'https://github.com/subhacom/argos/issues',
     },
     packages=find_packages(),
     classifiers=[
@@ -69,6 +68,6 @@ setup(
         'opencv-contrib-python',
         'pyyaml',
         'matplotlib',
-        'argos_toolkit'
+        'argos_toolkit',
     ],
 )
